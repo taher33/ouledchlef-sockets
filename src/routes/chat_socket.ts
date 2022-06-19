@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { addUser } from "../users";
+import { addUser, removeUser } from "../users";
 
 type NewUserPayload = {
   name: string;
@@ -28,8 +28,14 @@ const chat = (socket: Socket) => {
     return cb(error, success);
   };
 
+  const handleDisconnecting = () => {
+    removeUser(socket.id);
+    socket.broadcast.emit("chat:disconnecting", socket.id);
+  };
+
   //event listeners
   socket.on("chat:new user", handleNewUser);
+  socket.on("disconnecting", handleDisconnecting);
 };
 
 export default chat;
