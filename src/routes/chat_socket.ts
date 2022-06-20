@@ -1,9 +1,9 @@
 import { Socket } from "socket.io";
-import { addUser, removeUser } from "../users";
+import { addUser, getUsers, removeUser } from "../users";
 
-type NewUserPayload = {
+interface NewUserPayload {
   name: string;
-};
+}
 type CB = (error?: string, success?: string) => any;
 
 const chat = (socket: Socket) => {
@@ -28,6 +28,25 @@ const chat = (socket: Socket) => {
     return cb(error, success);
   };
 
+  type GetUsCB = (
+    error?: string,
+    success?: string,
+    users?: { id: string; name: string }[]
+  ) => any;
+
+  const handleGetUsers = (payload: { id?: string }, cb: GetUsCB) => {
+    if (!payload || !cb) {
+      return socket.emit(
+        "server_error",
+        "provide payload and cb, get users handler"
+      );
+    }
+
+    if (!payload.id) return cb("provide id");
+
+    cb(undefined, "success", getUsers(payload.id));
+  };
+
   const handleDisconnecting = () => {
     removeUser(socket.id);
     socket.broadcast.emit("chat:disconnecting", socket.id);
@@ -35,6 +54,7 @@ const chat = (socket: Socket) => {
 
   //event listeners
   socket.on("chat:new user", handleNewUser);
+  socket.on("chat:get users", handleGetUsers);
   socket.on("disconnecting", handleDisconnecting);
 };
 

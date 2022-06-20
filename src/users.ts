@@ -1,8 +1,14 @@
-type User = {
+export type User = {
   id: string;
   name: string;
 };
-const users: User[] | null = [];
+
+export const users: User[] | null = [];
+
+export const getUsers = (id?: string) => {
+  if (!id) return users;
+  return users.filter((user) => user.id === id);
+};
 
 export const addUser = ({ id, name }: User) => {
   name.trim().toLowerCase();
