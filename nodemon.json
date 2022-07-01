@@ -1,0 +1,3 @@
+{
+  "ignore": ["*.test.txt", "string.yml.json"]
+}

@@ -2,6 +2,7 @@ import express from "express";
 import { Server } from "socket.io";
 import http from "http";
 import chat from "./routes/chat_socket";
+import getYaml from "./generateJson";
 
 const port = 5000 || process.env.PORT;
 
@@ -22,9 +23,13 @@ const io = new Server(server, {
     ],
   },
 });
-
+getYaml();
 io.on("connection", (socket) => {
   chat(socket);
+
+  // io.of("/").adapter.on("join-room", (room, id) => {
+  //   console.log(`socket ${id} has joined room ${room}`);
+  // });
 });
 
 app.get("/", ({ req, res }: any) => {
