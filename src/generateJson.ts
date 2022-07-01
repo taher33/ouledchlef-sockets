@@ -16,4 +16,6 @@ const getYaml = async () => {
   }
 };
 
+getYaml();
+
 export default getYaml;
